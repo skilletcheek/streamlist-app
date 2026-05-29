@@ -1,0 +1,65 @@
+.streamlist-viewport {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.viewport-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.viewport-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.viewport-header p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+.form-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.input-group {
+  display: flex;
+  gap: 15px;
+}
+
+.text-input-field {
+  flex: 1;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-main);
+  padding: 15px 20px;
+  font-size: 1rem;
+  transition: border-color 0.25s ease;
+}
+
+.text-input-field:focus {
+  outline: none;
+  border-color: var(--accent-neon);
+}
+
+.submit-action-button {
+  background-color: var(--accent-neon);
+  border: none;
+  border-radius: 8px;
+  color: var(--text-main);
+  padding: 0 25px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+
+.submit-action-button:hover {
+  background-color: var(--accent-hover);
+}
