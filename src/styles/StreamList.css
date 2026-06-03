@@ -25,6 +25,7 @@
   border-radius: 12px;
   padding: 30px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  margin-bottom: 30px;
 }
 
 .input-group {
@@ -57,9 +58,126 @@
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   transition: background-color 0.25s ease;
 }
 
 .submit-action-button:hover {
   background-color: var(--accent-hover);
 }
+
+/* INTERACTIVE LIST ITEM CONTAINERS */
+.list-container {
+  margin-top: 20px;
+}
+
+.empty-notice {
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 40px;
+  background-color: var(--bg-secondary);
+  border-radius: 12px;
+  border: 1px dashed var(--border-color);
+}
+
+.interactive-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.list-item-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 18px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.list-item-card:hover {
+  transform: translateY(-2px);
+  border-color: #3a415a;
+}
+
+.item-title-text {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--text-main);
+  transition: color 0.25s ease, text-decoration 0.25s ease;
+}
+
+/* COMPLETED MATRIX TASK MODIFIERS */
+.list-item-card.completed-state {
+  opacity: 0.5;
+  background-color: #12141d;
+}
+
+.completed-state .item-title-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+/* CONTROL ICONS ACTIONS CLUSTER */
+.item-actions-cluster {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.complete-btn { color: var(--text-muted); }
+.complete-btn:hover { color: #2ecc71; background-color: rgba(46, 204, 113, 0.1); }
+.complete-btn.active { color: #2ecc71; }
+
+.edit-btn { color: #f1c40f; }
+.edit-btn:hover:not(:disabled) { background-color: rgba(241, 196, 15, 0.1); }
+.edit-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.delete-btn { color: var(--accent-neon); }
+.delete-btn:hover { background-color: rgba(229, 9, 20, 0.1); color: var(--accent-hover); }
+
+/* INLINE MODIFICATION CONTAINER INPUT */
+.edit-mode-container {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+  align-items: center;
+}
+
+.edit-input-field {
+  flex: 1;
+  background-color: var(--bg-primary);
+  border: 1px solid #f1c40f;
+  border-radius: 6px;
+  color: var(--text-main);
+  padding: 10px 15px;
+  font-size: 1.05rem;
+}
+
+.edit-input-field:focus {
+  outline: none;
+}
+
+.save-btn { color: #2ecc71; }
+.save-btn:hover { background-color: rgba(46, 204, 113, 0.1); }
+
+.cancel-btn { color: var(--text-muted); }
+.cancel-btn:hover { background-color: rgba(255, 255, 255, 0.05); }
