@@ -1,157 +1,107 @@
-import React, { useState } from 'react';
-import '../styles/StreamList.css';
+import React, { useState, useEffect } from 'react';
 
-function StreamList() {
-  // --- STATE VARIABLES ---
-  const [userInput, setUserInput] = useState('');
-  const [streamList, setStreamList] = useState([]);
+export default function StreamList() {
+  // Initialize state by checking localStorage first; fallback to empty array if empty
+  const [inputVal, setInputVal] = useState('');
+  const [items, setItems] = useState(() => {
+    const savedItems = localStorage.getItem('EZTechMovie_StreamList');
+    return savedItems ? JSON.parse(savedItems) : [];
+  });
   const [editingId, setEditingId] = useState(null);
-  const [editingText, setEditingText] = useState('');
+  const [editVal, setEditVal] = useState('');
 
-  // --- COMPONENT HANDLERS ---
-  
-  // Appends input text string to the primary array list
+  // Automatically write to localStorage whenever the items state array changes
+  useEffect(() => {
+    localStorage.setItem('EZTechMovie_StreamList', JSON.stringify(items));
+  }, [items]);
+
   const handleAddItem = (e) => {
     e.preventDefault();
-    if (userInput.trim() === '') return;
+    if (!inputVal.trim()) return;
 
     const newItem = {
-      id: Date.now(), // Unique identifier hook for DOM list rendering
-      title: userInput.trim(),
-      isCompleted: false,
+      id: Date.now(),
+      title: inputVal,
+      completed: false
     };
 
-    setStreamList([...streamList, newItem]);
-    setUserInput(''); // CRITERIA MET: Auto-clears the text input box immediately upon submit
+    setItems([...items, newItem]);
+    setInputVal('');
   };
 
-  // Filters out specific items by checking their ID signatures
   const handleDeleteItem = (id) => {
-    setStreamList(streamList.filter((item) => item.id !== id));
+    setItems(items.filter(item => item.id !== id));
   };
 
-  // Modifies specific item properties to switch completion styling rules
   const handleToggleComplete = (id) => {
-    setStreamList(
-      streamList.map((item) => 
-        item.id === id ? { ...item, isCompleted: !item.isCompleted } : item
-      )
-    );
+    setItems(items.map(item => 
+      item.id === id ? { ...item, completed: !item.completed } : item
+    ));
   };
 
-  // Switches item row view state into an editable input configuration
-  const handleStartEdit = (id, currentTitle) => {
+  const startEdit = (id, currentTitle) => {
     setEditingId(id);
-    setEditingText(currentTitle);
+    setEditVal(currentTitle);
   };
 
-  // Saves modified text inputs back into the tracking state variable array
   const handleSaveEdit = (id) => {
-    if (editingText.trim() === '') return;
-    setStreamList(
-      streamList.map((item) => 
-        item.id === id ? { ...item, title: editingText.trim() } : item
-      )
-    );
+    setItems(items.map(item => 
+      item.id === id ? { ...item, title: editVal } : item
+    ));
     setEditingId(null);
-    setEditingText('');
+    setEditVal('');
   };
 
   return (
-    <div className="streamlist-viewport">
-      <header className="viewport-header">
-        <h1>Your Cloud StreamList</h1>
-        <p>Dynamically manage, modify, and track your streaming watchlists in real-time.</p>
-      </header>
+    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto', color: '#fff' }}>
+      <h2>Create Your Cloud StreamList</h2>
       
-      {/* Input Form Section */}
-      <div className="form-card">
-        <form onSubmit={handleAddItem} className="input-aggregation-form">
-          <div className="input-group">
-            <input 
-              type="text" 
-              placeholder="Enter movie, series, or program title..." 
-              value={userInput}
-              onChange={(e) => setUserInput(e.target.value)}
-              className="text-input-field"
-            />
-            <button type="submit" className="submit-action-button">
-              <span className="material-icons">add</span> Add Title
-            </button>
-          </div>
-        </form>
-      </div>
+      <form onSubmit={handleAddItem} style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+        <input 
+          type="text"
+          value={inputVal}
+          onChange={(e) => setInputVal(e.target.value)}
+          placeholder="Enter movie, series, or program title..."
+          style={{ flexGrow: 1, padding: '10px', borderRadius: '4px', border: '1px solid #333', backgroundColor: '#1a1a1a', color: '#fff' }}
+        />
+        <button type="submit" style={{ padding: '10px 20px', backgroundColor: '#e50914', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+          Add To Console
+        </button>
+      </form>
 
-      {/* Dynamic List Rendering Area */}
-      <div className="list-container">
-        {streamList.length === 0 ? (
-          <p className="empty-notice">No entries added to your tracking matrix yet. Add titles above.</p>
-        ) : (
-          <ul className="interactive-list">
-            {streamList.map((item) => (
-              <li key={item.id} className={`list-item-card ${item.isCompleted ? 'completed-state' : ''}`}>
-                
-                {editingId === item.id ? (
-                  /* INLINE EDIT MODE RENDER VIEW */
-                  <div className="edit-mode-container">
-                    <input 
-                      type="text" 
-                      value={editingText} 
-                      onChange={(e) => setEditingText(e.target.value)}
-                      className="edit-input-field"
-                    />
-                    <button onClick={() => handleSaveEdit(item.id)} className="icon-btn save-btn" title="Save Changes">
-                      <span className="material-icons">save</span>
-                    </button>
-                    <button onClick={() => setEditingId(null)} className="icon-btn cancel-btn" title="Cancel Edit">
-                      <span className="material-icons">close</span>
-                    </button>
-                  </div>
-                ) : (
-                  /* STANDARD ACTIVE DATA RENDER VIEW */
-                  <>
-                    <span className="item-title-text">
-                      {item.title}
-                    </span>
-                    
-                    <div className="item-actions-cluster">
-                      <button 
-                        onClick={() => handleToggleComplete(item.id)} 
-                        className={`icon-btn complete-btn ${item.isCompleted ? 'active' : ''}`}
-                        title={item.isCompleted ? "Mark Incomplete" : "Mark Complete"}
-                      >
-                        <span className="material-icons">
-                          {item.isCompleted ? "check_circle" : "radio_button_unchecked"}
-                        </span>
-                      </button>
-                      
-                      <button 
-                        onClick={() => handleStartEdit(item.id, item.title)} 
-                        className="icon-btn edit-btn"
-                        title="Edit Title"
-                        disabled={item.isCompleted}
-                      >
-                        <span className="material-icons">edit</span>
-                      </button>
-                      
-                      <button 
-                        onClick={() => handleDeleteItem(item.id)} 
-                        className="icon-btn delete-btn"
-                        title="Delete Entry"
-                      >
-                        <span className="material-icons">delete_forever</span>
-                      </button>
-                    </div>
-                  </>
-                )}
-                
-              </li>
-            ))}
-          </ul>
-        )}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        {items.map(item => (
+          <div key={item.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'between', backgroundColor: '#111', padding: '15px', borderRadius: '6px', border: '1px solid #222', opacity: item.completed ? 0.5 : 1 }}>
+            
+            {editingId === item.id ? (
+              <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
+                <input 
+                  type="text" 
+                  value={editVal} 
+                  onChange={(e) => setEditVal(e.target.value)}
+                  style={{ flexGrow: 1, padding: '5px', backgroundColor: '#222', color: '#fff', border: '1px solid #444' }}
+                />
+                <button onClick={() => handleSaveEdit(item.id)} style={{ color: '#00ff00', background: 'none', border: 'none', cursor: 'pointer' }}>Save</button>
+                <button onClick={() => setEditingId(null)} style={{ color: '#ff0000', background: 'none', border: 'none', cursor: 'pointer' }}>Cancel</button>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span 
+                  onClick={() => handleToggleComplete(item.id)} 
+                  style={{ textDecoration: item.completed ? 'line-through' : 'none', cursor: 'pointer', flexGrow: 1 }}
+                >
+                  {item.title}
+                </span>
+                <div style={{ display: 'flex', gap: '15px' }}>
+                  <button onClick={() => startEdit(item.id, item.title)} style={{ color: '#aaa', background: 'none', border: 'none', cursor: 'pointer' }}>✏️ Edit</button>
+                  <button onClick={() => handleDeleteItem(item.id)} style={{ color: '#e50914', background: 'none', border: 'none', cursor: 'pointer' }}>🗑️ Delete</button>
+                </div>
+              </div>
+            )}
+
+          </div>
+        ))}
       </div>
     </div>
   );
 }
-
-export default StreamList;

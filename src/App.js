@@ -1,36 +1,29 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navigation from './components/Navigation';
+import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
 import StreamList from './components/StreamList';
 import Movies from './components/Movies';
-import Cart from './components/Cart';
-import About from './components/About';
-import './styles/App.css';
 
-function App() {
+export default function App() {
   return (
     <Router>
-      <div className="app-container">
-        {/* Persistent Global Header and Navigation Menu */}
-        <Navigation />
-        
-        {/* Declarative Viewport Switching Interface */}
-        <main className="main-content">
+      <div style={{ minHeight: '100vh', backgroundColor: '#0b0c10', fontFamily: 'Arial, sans-serif' }}>
+        {/* Navigation Shell */}
+        <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 40px', backgroundColor: '#1f2833' }}>
+          <div style={{ color: '#e50914', fontSize: '24px', fontWeight: 'bold' }}>🎬 EZTechMovie</div>
+          <div style={{ display: 'flex', gap: '20px' }}>
+            <NavLink to="/" style={({ isActive }) => ({ color: isActive ? '#e50914' : '#fff', textDecoration: 'none', fontWeight: 'bold' })}>StreamList</NavLink>
+            <NavLink to="/movies" style={({ isActive }) => ({ color: isActive ? '#e50914' : '#fff', textDecoration: 'none', fontWeight: 'bold' })}>Movies</NavLink>
+          </div>
+        </nav>
+
+        {/* View Layout Payload Area */}
+        <div style={{ padding: '20px' }}>
           <Routes>
             <Route path="/" element={<StreamList />} />
             <Route path="/movies" element={<Movies />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/about" element={<About />} />
           </Routes>
-        </main>
-        
-        {/* Persistent Global Corporate Footer */}
-        <footer className="global-footer">
-          <p>&copy; 2026 EZTechMovie. All Rights Reserved. HQ & Data Center: San Diego, CA.</p>
-        </footer>
+        </div>
       </div>
     </Router>
   );
 }
-
-export default App;
