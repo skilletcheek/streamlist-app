@@ -18,6 +18,16 @@ export default function App() {
     localStorage.setItem('EZTechMovie_Cart', JSON.stringify(cart));
   }, [cart]);
 
+  // AI Refactor: Automatically clear out the validation warning banner after 5 seconds
+  useEffect(() => {
+    if (warning) {
+      const timer = setTimeout(() => {
+        setWarning('');
+      }, 5000);
+      return () => clearTimeout(timer); // Cleanup function to handle fast consecutive clicks or unmounts
+    }
+  }, [warning]);
+
   const addToCart = (product) => {
     const isSubscription = product.service.toLowerCase().includes('subscription');
     const existingItem = cart.find(item => item.id === product.id);
