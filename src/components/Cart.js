@@ -1,76 +1,75 @@
-import React, { useMemo } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Cart({ cart, updateQuantity, removeFromCart }) {
-  // AI Refactor: Memoizing the subtotal computation to optimize CPU processing cycles
-  const totalPrice = useMemo(() => {
-    return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  }, [cart]);
+  const navigate = useNavigate();
+
+  // Calculate total price based on cart items
+  const totalCartPrice = cart.reduce((total, item) => {
+    const price = item.price ? parseFloat(item.price) : 0;
+    return total + (price * item.quantity);
+  }, 0);
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto', color: '#fff' }}>
-      <h2>Your Consolidated Statement Cart</h2>
-      <p style={{ color: '#aaa', marginBottom: '30px' }}>Review, adjust, or finalize your pending operational allocation access queues.</p>
-
+    <div style={{ maxWidth: '900px', margin: '0 auto', padding: '20px' }}>
+      <h2 style={{ color: '#e50914', marginBottom: '25px' }}>🛒 Your Shopping Cart</h2>
+      
       {cart.length === 0 ? (
-        <div style={{ backgroundColor: '#111', border: '1px solid #222', borderRadius: '8px', padding: '40px', textAlign: 'center', color: '#666' }}>
-          <div style={{ fontSize: '48px', marginBottom: '10px' }}>🛒</div>
-          <h3>Your cart buffer space is currently empty.</h3>
+        <div style={{ backgroundColor: '#1f2833', padding: '30px', borderRadius: '8px', textAlign: 'center', border: '1px solid #333' }}>
+          <p style={{ color: '#999', fontSize: '16px', margin: 0 }}>Your cart is currently empty.</p>
         </div>
       ) : (
-        <div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '30px' }}>
-            {cart.map(item => {
-              const isSub = item.service.toLowerCase().includes('subscription');
-              return (
-                <div key={item.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#111', border: '1px solid #222', borderRadius: '8px', padding: '15px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '15px', flex: 1 }}>
-                    <img src={item.img} alt={item.service} style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
-                    <div>
-                      <h4 style={{ margin: '0 0 4px 0', fontSize: '16px' }}>{item.service}</h4>
-                      <span style={{ color: '#aaa', fontSize: '14px' }}>${item.price.toFixed(2)} each</span>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginRight: '30px' }}>
+        <>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            {cart.map((item) => (
+              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#1f2833', padding: '20px', borderRadius: '8px', border: '1px solid #333' }}>
+                <div>
+                  <h4 style={{ margin: '0 0 5px 0', color: '#fff', fontSize: '18px' }}>{item.service || item.title}</h4>
+                  <p style={{ margin: 0, color: '#c5a059', fontWeight: 'bold' }}>${item.price} / mo</p>
+                </div>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', backgroundColor: '#0b0c10', borderRadius: '4px', border: '1px solid #444' }}>
                     <button 
                       onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      style={{ width: '28px', height: '28px', backgroundColor: '#222', color: '#fff', border: '1px solid #444', borderRadius: '4px', cursor: 'pointer' }}
+                      style={{ backgroundColor: 'transparent', border: 'none', color: '#fff', padding: '8px 12px', cursor: 'pointer', fontWeight: 'bold' }}
                     >
                       -
                     </button>
-                    <span style={{ fontSize: '16px', fontWeight: 'bold' }}>{item.quantity}</span>
+                    <span style={{ color: '#fff', padding: '0 10px', minWidth: '20px', textAlign: 'center' }}>{item.quantity}</span>
                     <button 
                       onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      disabled={isSub}
-                      style={{ width: '28px', height: '28px', backgroundColor: isSub ? '#333' : '#222', color: isSub ? '#666' : '#fff', border: '1px solid #444', borderRadius: '4px', cursor: isSub ? 'not-allowed' : 'pointer' }}
+                      style={{ backgroundColor: 'transparent', border: 'none', color: '#fff', padding: '8px 12px', cursor: 'pointer', fontWeight: 'bold' }}
                     >
                       +
                     </button>
                   </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                    <span style={{ fontSize: '18px', fontWeight: 'bold', minWidth: '80px', textAlign: 'right' }}>
-                      ${(item.price * item.quantity).toFixed(2)}
-                    </span>
-                    <button onClick={() => removeFromCart(item.id)} style={{ background: 'none', border: 'none', color: '#e50914', cursor: 'pointer', fontWeight: 'bold' }}>
-                      🗑️ Remove
-                    </button>
-                  </div>
+                  
+                  <button 
+                    onClick={() => removeFromCart(item.id)}
+                    style={{ backgroundColor: 'transparent', border: '1px solid #e50914', color: '#e50914', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+                  >
+                    Remove
+                  </button>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
 
-          <div style={{ backgroundColor: '#1f2833', border: '1px solid #45f3ff', borderRadius: '8px', padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <span style={{ color: '#aaa', textTransform: 'uppercase', fontSize: '12px' }}>Total Statement Price</span>
-              <h3 style={{ margin: '5px 0 0 0', fontSize: '28px', color: '#45f3ff' }}>${totalPrice.toFixed(2)}</h3>
-            </div>
-            <button style={{ padding: '12px 28px', backgroundColor: '#e50914', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>
-              Finalize Allocation Purchase
+          <div style={{ marginTop: '30px', padding: '20px', backgroundColor: '#1f2833', borderRadius: '8px', border: '1px solid #333', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '18px', color: '#999', fontWeight: 'bold' }}>ESTIMATED TOTAL:</span>
+            <span style={{ fontSize: '24px', color: '#e50914', fontWeight: 'bold' }}>${totalCartPrice.toFixed(2)} / mo</span>
+          </div>
+          
+          <div style={{ marginTop: '30px', textAlign: 'right' }}>
+            <button 
+              onClick={() => navigate('/checkout')}
+              style={{ padding: '14px 35px', backgroundColor: '#e50914', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 6px rgba(0,0,0,0.2)' }}
+            >
+              Proceed to Checkout ➔
             </button>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
